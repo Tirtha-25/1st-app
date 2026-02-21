@@ -3,11 +3,10 @@ import 'package:http/http.dart' as http;
 import '../models/weather_model.dart';
 
 class WeatherService {
-  // API Key is now injected at build time for security.
-  // Build with: --dart-define=OPENWEATHER_API_KEY=your_key_here
+  // API Key is injected at build time for security: --dart-define=OPENWEATHER_API_KEY=your_key_here
   static const String _apiKey = String.fromEnvironment(
     'OPENWEATHER_API_KEY',
-    defaultValue: '4d8fb5b93d4af21d66a2948710284366', // Temporary fallback
+    defaultValue: '4d8fb5b93d4af21d66a2948710284366',
   );
   static const String _baseUrl = 'https://api.openweathermap.org/data/2.5';
 

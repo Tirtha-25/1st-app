@@ -108,12 +108,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      debugPrint('Location error: $e');
-      
       // If we are on web and not on localhost/https, show a specific error
       if (kIsWeb && e.toString().contains('User denied Geolocation')) {
         setState(() {
-          _errorMessage = 'Location denied by browser. Please allow location access.';
+          _errorMessage = 'Location access was denied. Please allow location in your browser settings.';
           _isLoading = false;
         });
         return;
@@ -124,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
         await _loadWeather('Kathmandu');
       } catch (_) {
         setState(() {
-          _errorMessage = 'Unable to get location or weather data. Please search manually.';
+          _errorMessage = 'Connection error. Please check your internet and try again.';
           _isLoading = false;
         });
       }
