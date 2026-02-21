@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import '../models/weather_model.dart';
 import '../services/weather_service.dart';
 import '../utils/weather_icons.dart';
@@ -81,8 +83,28 @@ class _HomeScreenState extends State<HomeScreen> {
         position.longitude,
       );
 
+      // Attempt to get a more accurate address/city name from coordinates
+      String? cityName;
+      if (!kIsWeb) {
+        try {
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude,
+            position.longitude,
+          );
+          if (placemarks.isNotEmpty) {
+            final place = placemarks.first;
+            // Prefer locality (City), fallback to subAdministrativeArea (District/Area)
+            cityName = place.locality ?? place.subAdministrativeArea ?? place.name;
+          }
+        } catch (e) {
+          debugPrint('Geocoding error: $e');
+        }
+      }
+
       setState(() {
-        _weather = weather;
+        _weather = cityName != null && cityName.isNotEmpty 
+            ? weather.copyWith(cityName: cityName) 
+            : weather;
         _isLoading = false;
       });
     } catch (e) {

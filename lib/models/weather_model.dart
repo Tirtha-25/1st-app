@@ -61,6 +61,48 @@ class WeatherData {
       aqi: json['aqi'] ?? 0,
     );
   }
+
+  WeatherData copyWith({
+    String? cityName,
+    String? country,
+    double? temperature,
+    double? feelsLike,
+    double? tempMin,
+    double? tempMax,
+    int? humidity,
+    double? windSpeed,
+    int? pressure,
+    String? description,
+    String? icon,
+    String? mainCondition,
+    int? visibility,
+    DateTime? sunrise,
+    DateTime? sunset,
+    List<HourlyForecast>? hourlyForecast,
+    List<DailyForecast>? dailyForecast,
+    int? aqi,
+  }) {
+    return WeatherData(
+      cityName: cityName ?? this.cityName,
+      country: country ?? this.country,
+      temperature: temperature ?? this.temperature,
+      feelsLike: feelsLike ?? this.feelsLike,
+      tempMin: tempMin ?? this.tempMin,
+      tempMax: tempMax ?? this.tempMax,
+      humidity: humidity ?? this.humidity,
+      windSpeed: windSpeed ?? this.windSpeed,
+      pressure: pressure ?? this.pressure,
+      description: description ?? this.description,
+      icon: icon ?? this.icon,
+      mainCondition: mainCondition ?? this.mainCondition,
+      visibility: visibility ?? this.visibility,
+      sunrise: sunrise ?? this.sunrise,
+      sunset: sunset ?? this.sunset,
+      hourlyForecast: hourlyForecast ?? this.hourlyForecast,
+      dailyForecast: dailyForecast ?? this.dailyForecast,
+      aqi: aqi ?? this.aqi,
+    );
+  }
 }
 
 class HourlyForecast {
