@@ -45,6 +45,16 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() {
+          _errorMessage = 'Location services are disabled. Please enable GPS.';
+          _isLoading = false;
+        });
+        return;
+      }
+
       // Check location permission
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
@@ -53,16 +63,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        // Fallback to default city
+        // Fallback to default city instead of showing error for better UX
         await _loadWeather('Kathmandu');
         return;
       }
 
-      // Get current position
+      // Get current position with a more reasonable timeout and accuracy
       final position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.low,
-          timeLimit: Duration(seconds: 4),
+          accuracy: LocationAccuracy.medium,
+          timeLimit: Duration(seconds: 10),
         ),
       );
 
@@ -76,12 +86,23 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      // Fallback to default city
+      debugPrint('Location error: $e');
+      
+      // If we are on web and not on localhost/https, show a specific error
+      if (kIsWeb && e.toString().contains('User denied Geolocation')) {
+        setState(() {
+          _errorMessage = 'Location denied by browser. Please allow location access.';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Fallback to default city for other errors (like timeout)
       try {
         await _loadWeather('Kathmandu');
       } catch (_) {
         setState(() {
-          _errorMessage = 'Unable to get weather data';
+          _errorMessage = 'Unable to get location or weather data. Please search manually.';
           _isLoading = false;
         });
       }
